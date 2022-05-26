@@ -73,6 +73,7 @@ def load_data():
                     d = data[len(data) - 1][5]
                     d = d - 1
                     data[len(data) - 1][5] = d
+        print(len(data))
 
     return np.array(data), np.array(sales)
 
@@ -103,6 +104,7 @@ def show(label_pred, X, count):
     plt.legend(loc=2)
     plt.savefig("fig_1.png")
     plt.clf()
+
 
 # 进行K-Means聚类，发现单次购买数量的异常点
 def K_Means(sale_data, data_raw, data):
@@ -182,12 +184,13 @@ def PCA_(X):
 if __name__ == "__main__":
     # 装载数据
     data_raw, sales = load_data()
+    print(data_raw.shape)
     # 对商品购买情况进行聚类，并消除异常何人噪声
     data = K_Means(data_raw=data_raw, data=data_raw, sale_data=sales[:, 2:])
     # 进行主成分分析
     min_col_index = PCA_(data[:, 2:])
-    # 根据主成分分析结果去掉多于属性（门店号或者PSNO）
-    # 去掉总价格这一冗余属性
+# 根据主成分分析结果去掉多于属性（门店号或者PSNO）
+# 去掉总价格这一冗余属性
     data = np.hstack((data[:, 1:min_col_index + 1], data[:, min_col_index + 2:9]))
-    # 保存在CVS文件中
-    pd.DataFrame(data, columns=["SerNo", "PSNo", "Data", "GoodNo", "GoodID", "Num", "Price"]).to_csv("data.csv")
+# 保存在CVS文件中
+    pd.DataFrame(data, columns=["SerNo", "PSNo", "Data", "GoodNo", "GoodID", "Num", "Price"]).to_csv("data.csv",index=False)
