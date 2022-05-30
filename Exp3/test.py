@@ -1,6 +1,5 @@
+import numpy as np
+import matplotlib.pyplot as plt
+color_list = plt.cm.tab10(np.linspace(0, 1, 12))
 
-f1 = frozenset({1,2,4})
-
-f2 = frozenset({1,2,5})
-
-print(f1 | f2)
+print(color_list)

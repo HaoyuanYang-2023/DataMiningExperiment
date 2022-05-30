@@ -189,8 +189,8 @@ if __name__ == "__main__":
     data = K_Means(data_raw=data_raw, data=data_raw, sale_data=sales[:, 2:])
     # 进行主成分分析
     min_col_index = PCA_(data[:, 2:])
-# 根据主成分分析结果去掉多于属性（门店号或者PSNO）
-# 去掉总价格这一冗余属性
+    # 根据主成分分析结果去掉多于属性（门店号或者PSNO）
+    # 去掉总价格这一冗余属性
     data = np.hstack((data[:, 1:min_col_index + 1], data[:, min_col_index + 2:9]))
-# 保存在CVS文件中
+    # 保存在CVS文件中
     pd.DataFrame(data, columns=["SerNo", "PSNo", "Data", "GoodNo", "GoodID", "Num", "Price"]).to_csv("data.csv",index=False)
