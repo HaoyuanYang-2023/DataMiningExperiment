@@ -2,8 +2,8 @@ import pandas as pd
 import argparse
 
 parser = argparse.ArgumentParser(description='Exp2')
-parser.add_argument('--Shop', type=str, choices=["1019", "1020", "1021"])
-parser.add_argument('--Good', type=str, choices=["10010油", "10020面制品", "10030米和粉", "10088粮油类赠品"])
+parser.add_argument('--Shop', type=str, default="1019", choices=["1019", "1020", "1021"])
+parser.add_argument('--Good', type=str, default="10010油", choices=["10010油", "10020面制品", "10030米和粉", "10088粮油类赠品"])
 
 parser.set_defaults(augment=True)
 args = parser.parse_args()
