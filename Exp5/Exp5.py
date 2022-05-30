@@ -1,3 +1,12 @@
+#!/usr/bin/env python 　
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2021 #
+# @Time    : 2022/5/30 21:29
+# @Author  : Yang Haoyuan
+# @Email   : 2723701951@qq.com
+# @File    : Exp5.py
+# @Software: PyCharm
 import math
 import random
 import argparse
@@ -16,6 +25,7 @@ args = parser.parse_args()
 print(args)
 
 
+# 读取数据集
 def loadDataset(filename):
     dataSet = []
     with open(filename, 'r') as file_to_read:
@@ -32,6 +42,7 @@ def loadDataset(filename):
     return dataSet
 
 
+# 计算n维数据间的欧式距离
 def euclid(p1, p2, n):
     distance = 0
     for i in range(n):
@@ -39,23 +50,20 @@ def euclid(p1, p2, n):
     return math.sqrt(distance)
 
 
+# 初始化聚类中心
 def init_centroids(dataSet, k, n):
     _min = dataSet.min(axis=0)
     _max = dataSet.max(axis=0)
 
     centre = np.empty((k, n))
-    # centre = np.array(dataSet).mean()
     for i in range(k):
         for j in range(n):
-            # centre[i][j] = _min[j] + i*(_max[j]-_min[j])/k
             centre[i][j] = random.uniform(_min[j], _max[j])
-    # print(centre)
     return centre
 
 
+# 计算每个数据到每个中心点的欧式距离
 def cal_distance(dataSet, centroids, k, n):
-    # 每个点到每个中心点的距离矩阵
-    # print("CEN", centroids)
     dis = np.empty((len(dataSet), k))
     for i in range(len(dataSet)):
         for j in range(k):
@@ -63,14 +71,15 @@ def cal_distance(dataSet, centroids, k, n):
     return dis
 
 
+# K-Means聚类
 def KMeans_Cluster(dataSet, k, n, epochs):
     epoch = 0
+    # 初始化聚类中心
     centroids = init_centroids(dataSet, k, n)
+    # 迭代最多epochs
     while epoch < epochs:
-
+        # 计算欧式距离
         distance = cal_distance(dataSet, centroids, k, n)
-        # print("CEN", centroids)
-        # print("DIS", distance)
 
         classify = []
         for i in range(k):
@@ -89,24 +98,17 @@ def KMeans_Cluster(dataSet, k, n, epochs):
                 return labels, centroids
 
             classify[index].append(i)
-        # print("CLASS", classify)
         # 构造新的中心点
         new_centroids = np.empty((k, n))
         for i in range(len(classify)):
-            # print(i)
-            # print(dataSet[classify[i]])
-            #
             for j in range(n):
-                # print(classify[i])
-                # print(dataSet[classify[i]][:, j:j + 1])
                 new_centroids[i][j] = np.sum(dataSet[classify[i]][:, j:j + 1]) / len(classify[i])
-                # print("IJ", new_centroids[i][j])
-                # new_centroids[i][1] = np.sum(dataSet[classify[i]][1]) / len(classify[i])
 
         # 比较新的中心点和旧的中心点是否一样
         if (new_centroids == centroids).all():
-            # print("Epochs: ", epoch)
+            # 中心点一样，停止迭代
             label_pred = np.empty(len(data_set))
+            # 返回个样本聚类结果和中心点
             for i in range(k):
                 label_pred[classify[i]] = i
 
@@ -116,30 +118,35 @@ def KMeans_Cluster(dataSet, k, n, epochs):
             epoch = epoch + 1
 
 
+# 聚类结果展示
 def show(label_pred, X, centroids):
     x = []
     for i in range(args.k):
         x.append([])
 
     for k in range(args.k):
-
         for i in range(len(label_pred)):
             _l = int(label_pred[i])
             x[_l].append(X[i])
     print(x)
     for i in range(args.k):
-        plt.scatter(np.array(x[i])[:, 0], np.array(x[i])[:, 1], color=plt.cm.Set1(i % 8), label='label'+str(i))
+        plt.scatter(np.array(x[i])[:, 0], np.array(x[i])[:, 1], color=plt.cm.Set1(i % 8), label='label' + str(i))
     plt.scatter(x=centroids[:, 0], y=centroids[:, 1], marker='*', label='pred_center')
     plt.legend(loc=3)
     plt.show()
 
 
 if __name__ == "__main__":
+    # 读取数据
     data_set = loadDataset(args.dataset)
+    # 原始数据展示
     plt.scatter(np.array(data_set)[:, :1], np.array(data_set)[:, 1:])
     plt.show()
-    # print("Data Set: ", data_set)
+    # 获取聚类结果
     labels, centroids = KMeans_Cluster(dataSet=np.array(data_set), k=args.k, n=args.n, epochs=args.epochs)
+
     print("Classes: ", labels)
     print("Centers: ", centroids)
+
+    # 展示聚类结果
     show(X=np.array(data_set), label_pred=labels, centroids=centroids)

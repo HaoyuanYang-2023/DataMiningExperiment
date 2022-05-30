@@ -1,3 +1,12 @@
+#!/usr/bin/env python 　
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2021 #
+# @Time    : 2022/5/30 21:29
+# @Author  : Yang Haoyuan
+# @Email   : 2723701951@qq.com
+# @File    : Exp3.py
+# @Software: PyCharm
 from numpy import *
 import pandas as pd
 from apyori import apriori
@@ -12,32 +21,32 @@ args = parser.parse_args()
 print(args)
 
 
+# 读取数据集
 def loadDataSet():
     data = pd.read_csv("data.csv")
     data_19 = data[:7693]
     data_20 = data[7693:17589]
     data_21 = data[17589:]
 
+    # 按照流水号分组,把同一个篮子里的商品分到一组
     data_df_list = [data_19.groupby(['SerNo'])['GoodID'], data_20.groupby(['SerNo'])['GoodID'],
                     data_21.groupby(['SerNo'])['GoodID']]
     list_ = []
     list_re = []
 
-    df_19 = pd.DataFrame(data_19)
     for df in data_df_list:
         df_ = pd.DataFrame(df)
         for i in range(df_.shape[0]):
             tmp = []
+            # 将每个篮子里的商品编号添加到同一事务项
             l = df_.loc[i][1].values.tolist()
             for gid in l:
                 tmp.append(str(gid)[:5])
+            # 添加至项集
             list_.append(tmp)
         list_re.append(list_)
-        # print(df_19.loc[i].values.tolist())
-        # break
 
     return list_re[0], list_re[1], list_re[2]
-    # return data_19.values.tolist(), data_20.values.tolist(), data_21.values.tolist()
 
 
 # 创造1-项集C1
@@ -74,7 +83,6 @@ def scanD(dataSet, Ck, minSupport):
     supportData = {}
     # 计算Ck中每一项的支持度
     for key in ssCnt:
-        # support = ssCnt[key] / numItems
         support = ssCnt[key]
         if support >= minSupport:
             # 大于最小支持度加入结果集合
@@ -87,19 +95,18 @@ def scanD(dataSet, Ck, minSupport):
 # 从Lk频繁项集中产生Ck+1
 def aprioriGen(Lk, k):
     lenLk = len(Lk)
-    # print(len(Lk))
     # 临时字典，存储
-    temp_dict = []
+    temp = []
     for i in range(lenLk):
         for j in range(i + 1, lenLk):
             # 两两合并，执行了 lenLk！次
             L1 = Lk[i] | Lk[j]
             if len(L1) == k:
-                if L1 not in temp_dict:
+                if L1 not in temp:
                     # 如果合并后的子项元素有k个，满足要求
-                    temp_dict.append(L1)
+                    temp.append(L1)
 
-    return temp_dict
+    return temp
 
 
 def apriori(dataSet, minSupport=0.5):
@@ -109,7 +116,6 @@ def apriori(dataSet, minSupport=0.5):
     print('\n')
 
     D = list(map(set, dataSet))
-    # print("D: ", D)
 
     # 构建L1,获取置信度
     L1, supportData = scanD(D, C1, minSupport)
@@ -118,9 +124,7 @@ def apriori(dataSet, minSupport=0.5):
     print("L1: ", L1)
     print('\n')
 
-
     Lk_List = [L1]
-    # print("L: ", Lk_List)
     k = 2
     while len(Lk_List[k - 2]) > 0:
         print()
@@ -139,23 +143,24 @@ def apriori(dataSet, minSupport=0.5):
         Lk_List.append(Lk)
         print("Support Data for C" + str(k) + ": ", supK)
         print('\n')
+
+        # 频繁项集为空，终止迭代
         if not Lk:
             print("频繁项集为空")
             break
         print("L" + str(k) + ": ", Lk)
         print('\n')
         k += 1
-        # print("Lk_List", Lk_List[k - 2])
 
     return Lk_List, supportData
 
 
 if __name__ == "__main__":
     dataSet19, dataSet20, dataSet21 = loadDataSet()
+    # 根据参数对不同数据集进行挖掘
     if args.Dateset == "1019":
         L, suppData = apriori(dataSet19, args.minSup)
     if args.Dateset == "1020":
         L, suppData = apriori(dataSet20, args.minSup)
     if args.Dateset == "1021":
         L, suppData = apriori(dataSet21, args.minSup)
-

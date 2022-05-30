@@ -1,3 +1,13 @@
+#!/usr/bin/env python 　
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2021 #
+# @Time    : 2022/5/30 21:26
+# @Author  : Yang Haoyuan
+# @Email   : 2723701951@qq.com
+# @File    : Exp4.py
+# @Software: PyCharm
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import KFold
@@ -55,6 +65,7 @@ def cal_base_rates(categories, total):
 def f_prob(data, count):
     likelihood = {'yes': {}, 'no': {}}
 
+    # 根据AGE(youth, middle_aged, senior)和BUY(yes, no)统计概率
     df_group = data.groupby(['AGE', 'BUY'])
     try:
         c = df_group.size()["youth", "yes"]
@@ -92,6 +103,7 @@ def f_prob(data, count):
         c = 0
     likelihood['no']['senior'] = c / count['no']
 
+    # 根据INCOME(high, medium, low)和BUY(yes, no)统计概率
     df_group = data.groupby(['INCOME', 'BUY'])
     try:
         c = df_group.size()["high", "yes"]
@@ -129,6 +141,7 @@ def f_prob(data, count):
         c = 0
     likelihood['no']['low'] = c / count['no']
 
+    # 根据STUDENT(yes, no)和BUY(yes, no)统计概率
     df_group = data.groupby(['STUDENT', 'BUY'])
     try:
         c = df_group.size()["yes", "yes"]
@@ -154,6 +167,7 @@ def f_prob(data, count):
         c = 0
     likelihood['no']['no'] = c / count['no']
 
+    # 根据CREDIT(excellent, fair)和BUY(yes, no)统计概率
     df_group = data.groupby(['CREDIT', 'BUY'])
     try:
         c = df_group.size()["excellent", "yes"]
@@ -184,25 +198,31 @@ def f_prob(data, count):
 
 # 训练
 def train(train_data):
+    # 获取各类数量和训练样本总数
     count, total = count_total(train_data)
+    # 获取先验概率
     priori_prob = cal_base_rates(count, total)
+    # 保存先验概率
     np.save("priori_prob.npy", priori_prob)
-    # print(priori_prob)
+    # 获取各特征的条件概率
     feature_prob = f_prob(train_data, count)
+    # 保存条件概率
     np.save("feature_prob.npy", feature_prob)
-    # print(feature_prob)
     print("训练完成")
 
 
 # 分类器
 def NaiveBayesClassifier(AGE=None, INCOME=None, STUDENT=None, CREDIT=None):
     res = {}
+
+    # 根据特征计算各类的概率
     for label in ['yes', 'no']:
         prob = priori_prob[label]
         prob *= feature_prob[label][AGE] * feature_prob[label][INCOME] * feature_prob[label][STUDENT] \
                 * feature_prob[label][CREDIT]
         res[label] = prob
     print("预测概率：", res)
+    # 选择概率最高的类作为分类结果
     res = sorted(res.items(), key=lambda kv: kv[1], reverse=True)
     return res[0][0]
 

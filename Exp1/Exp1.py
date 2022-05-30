@@ -1,3 +1,12 @@
+#!/usr/bin/env python 　
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2021 #
+# @Time    : 2022/5/30 21:27
+# @Author  : Yang Haoyuan
+# @Email   : 2723701951@qq.com
+# @File    : Exp1.py
+# @Software: PyCharm
 import argparse
 import numpy as np
 from sklearn.cluster import KMeans
