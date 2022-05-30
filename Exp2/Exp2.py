@@ -52,6 +52,8 @@ def make_cuboid(data):
 
     for df in t:
 
+
+
         # 按照商品类别，将各类商品各日期销售总额计算出来并保存
         _df = df[df["GoodID"] >= 1001000]
         _df = _df[_df["GoodID"] <= 1001099]
