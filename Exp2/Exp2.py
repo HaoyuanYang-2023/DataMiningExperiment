@@ -30,14 +30,14 @@ def getData():
 
 # 构建数据立方体，数据结构采用DataFrame
 def make_cuboid(data):
-    arr = [[20030413, 0.0, 0.0, 0.0, 0.0],
-           [20030414, 0.0, 0.0, 0.0, 0.0],
-           [20030415, 0.0, 0.0, 0.0, 0.0],
-           [20030416, 0.0, 0.0, 0.0, 0.0],
-           [20030417, 0.0, 0.0, 0.0, 0.0],
-           [20030418, 0.0, 0.0, 0.0, 0.0],
-           [20030419, 0.0, 0.0, 0.0, 0.0]]
-    dataFrame = pd.DataFrame(arr, columns=["Date", "10010油", "10020面制品", "10030米和粉", "10088粮油类赠品"],
+    arr = [[ 0.0, 0.0, 0.0, 0.0],
+           [ 0.0, 0.0, 0.0, 0.0],
+           [0.0, 0.0, 0.0, 0.0],
+           [0.0, 0.0, 0.0, 0.0],
+           [ 0.0, 0.0, 0.0, 0.0],
+           [ 0.0, 0.0, 0.0, 0.0],
+           [0.0, 0.0, 0.0, 0.0]]
+    dataFrame = pd.DataFrame(arr, columns=["10010油", "10020面制品", "10030米和粉", "10088粮油类赠品"],
                              index=["13", "14", "15", "16", "17", "18", "19"])
     # 按日期进行筛选，把各日期的数据放入list中
     t = [data.loc[data["Date"] == 20030413, ["Date", "GoodID", "Num", "Price"]],
@@ -97,15 +97,15 @@ if __name__ == "__main__":
     df_1019 = make_cuboid(data_1019)
     df_1019.applymap('{:.4f}'.format).to_csv("1019.txt", index=False)
 
-    df_1020 = make_cuboid(data_1019)
+    df_1020 = make_cuboid(data_1020)
     df_1020.applymap('{:.4f}'.format).to_csv("1020.txt", index=False)
 
-    df_1021 = make_cuboid(data_1019)
+    df_1021 = make_cuboid(data_1021)
     df_1021.applymap('{:.4f}'.format).to_csv("1021.txt", index=False)
 
     # 三维数据立方体保存到txt文件中
-    data = pd.concat([df_1019, df_1020, df_1021], keys=["1019", "1020", "1021"])
-    data.to_csv("data_cubiod.txt")
+    data = pd.concat([df_1019, df_1020, df_1021], keys=["1019", "1020", "1021"], names=["Shop", "Date"])
+    data.to_csv("data_cubiod.csv")
 
     # "1020商店10010油类商品13日总的销售额
     print("1020商店10010油类商品13日总的销售额", format(data.loc[("1020", "13"), "10010油"], '.2f'))
