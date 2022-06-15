@@ -13,6 +13,7 @@ import argparse
 
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.metrics import calinski_harabasz_score
 
 parser = argparse.ArgumentParser(description="Exp5")
 parser.add_argument("--epochs", type=int, default=100)
@@ -128,7 +129,6 @@ def show(label_pred, X, centroids):
         for i in range(len(label_pred)):
             _l = int(label_pred[i])
             x[_l].append(X[i])
-    print(x)
     for i in range(args.k):
         plt.scatter(np.array(x[i])[:, 0], np.array(x[i])[:, 1], color=plt.cm.Set1(i % 8), label='label' + str(i))
     plt.scatter(x=centroids[:, 0], y=centroids[:, 1], marker='*', label='pred_center')
@@ -147,6 +147,8 @@ if __name__ == "__main__":
 
     print("Classes: ", labels)
     print("Centers: ", centroids)
-
+    # 使用Calinski-Harabaz标准评价聚类结果
+    scores = calinski_harabasz_score(data_set, labels)
+    print("Scores: ", round(scores, 2))
     # 展示聚类结果
     show(X=np.array(data_set), label_pred=labels, centroids=centroids)

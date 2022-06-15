@@ -61,7 +61,7 @@ def cal_base_rates(categories, total):
     return rates
 
 
-# 计算各特征条件概率
+# 计算各类条件概率
 def f_prob(data, count):
     likelihood = {'yes': {}, 'no': {}}
 
@@ -214,7 +214,8 @@ def train(train_data):
 # 分类器
 def NaiveBayesClassifier(AGE=None, INCOME=None, STUDENT=None, CREDIT=None):
     res = {}
-
+    priori_prob = np.load('priori_prob.npy', allow_pickle=True).item()
+    feature_prob = np.load('feature_prob.npy', allow_pickle=True).item()
     # 根据特征计算各类的概率
     for label in ['yes', 'no']:
         prob = priori_prob[label]
@@ -258,9 +259,9 @@ if __name__ == '__main__':
         train_data = loadDataset("date.txt")
         train(train_data)
     if args.mode == "test":
-        priori_prob = np.load('priori_prob.npy', allow_pickle=True).item()
+        '''priori_prob = np.load('priori_prob.npy', allow_pickle=True).item()
         print("先验概率: ", priori_prob)
         feature_prob = np.load('feature_prob.npy', allow_pickle=True).item()
-        print("特性分类概率: ", feature_prob)
+        print("类条件概率: ", feature_prob)'''
         ret = NaiveBayesClassifier(args.AGE, args.INCOME, args.STUDENT, args.CREDIT)
         print("预测结果: ", ret)

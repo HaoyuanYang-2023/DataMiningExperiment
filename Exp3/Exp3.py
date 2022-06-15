@@ -5,7 +5,7 @@
 # @Time    : 2022/5/30 21:29
 # @Author  : Yang Haoyuan
 # @Email   : 2723701951@qq.com
-# @File    : Exp3.py
+# @File    : Exp3.pyDa
 # @Software: PyCharm
 from numpy import *
 import pandas as pd
@@ -13,7 +13,7 @@ from apyori import apriori
 import argparse
 
 parser = argparse.ArgumentParser(description='Exp3')
-parser.add_argument('--Dateset', type=str, choices=["1019", "1020", "1021"])
+parser.add_argument('--Dataset', type=str, choices=["1019", "1020", "1021"])
 parser.add_argument('--minSup', type=float)
 
 parser.set_defaults(augment=True)
@@ -87,8 +87,8 @@ def scanD(dataSet, Ck, minSupport):
         if support >= minSupport:
             # 大于最小支持度加入结果集合
             retList.append(key)
-        # 记录支持度数据
-        supportData[key] = support
+            # 记录支持度数据
+            supportData[key] = support
     return retList, supportData
 
 
@@ -119,8 +119,8 @@ def apriori(dataSet, minSupport=0.5):
 
     # 构建L1,获取置信度
     L1, supportData = scanD(D, C1, minSupport)
-    print("Support Data for C1: ", supportData)
-    print('\n')
+    # print("Support Data for C1: ", supportData)
+    # print('\n')
     print("L1: ", L1)
     print('\n')
 
@@ -133,6 +133,7 @@ def apriori(dataSet, minSupport=0.5):
         # Ck为空，不能合并，迭代终止
         if not Ck:
             print("项集为空")
+            print('\n')
             break
         print("C" + str(k) + ": ", Ck)
         print('\n')
@@ -141,12 +142,13 @@ def apriori(dataSet, minSupport=0.5):
         supportData.update(supK)
         # 新的Lk加入Lk_List
         Lk_List.append(Lk)
-        print("Support Data for C" + str(k) + ": ", supK)
-        print('\n')
+        # print("Support Data for C" + str(k) + ": ", supK)
+        # print('\n')
 
         # 频繁项集为空，终止迭代
         if not Lk:
-            print("频繁项集为空")
+            print("C" + str(k) + "频繁项集为空")
+            print('\n')
             break
         print("L" + str(k) + ": ", Lk)
         print('\n')
@@ -158,9 +160,18 @@ def apriori(dataSet, minSupport=0.5):
 if __name__ == "__main__":
     dataSet19, dataSet20, dataSet21 = loadDataSet()
     # 根据参数对不同数据集进行挖掘
-    if args.Dateset == "1019":
+    if args.Dataset == "1019":
         L, suppData = apriori(dataSet19, args.minSup)
-    if args.Dateset == "1020":
+        print(L)
+        # print(suppData)
+    if args.Dataset == "1020":
         L, suppData = apriori(dataSet20, args.minSup)
-    if args.Dateset == "1021":
+        # print(L)
+        print(suppData)
+    if args.Dataset == "1021":
         L, suppData = apriori(dataSet21, args.minSup)
+        print(L)
+        # print(suppData)
+
+
+
